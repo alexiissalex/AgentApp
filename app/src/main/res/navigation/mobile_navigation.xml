@@ -14,12 +14,20 @@
         android:id="@+id/navigation_Lists_of_rent"
         android:name="com.example.agentapp.fragments.ListsOfRentFragment"
         android:label="@string/Lists_of_rent"
-        tools:layout="@layout/fragment_lists_of_rent"/>
+        tools:layout="@layout/fragment_lists_of_rent">
+        <action
+            android:id="@+id/action_navigation_Lists_of_rent_to_addDetailActivity"
+            app:destination="@id/addDetailActivity" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_To_do_list"
         android:name="com.example.agentapp.fragments.ToDoFragment"
         android:label="@string/To_do_list"
         tools:layout="@layout/fragment_to_do"/>
-
+    <activity
+        android:id="@+id/addDetailActivity"
+        android:name="com.example.agentapp.activities.AddDetailActivity"
+        android:label="activity_add_detail"
+        tools:layout="@layout/activity_add_detail" />
 
 </navigation>

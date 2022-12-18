@@ -10,7 +10,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.agentapp.R
+import com.example.agentapp.adapter.adt_rv
+import com.example.agentapp.model.rv_data
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.DayBinder
@@ -25,17 +29,13 @@ import java.time.format.DateTimeFormatter
 class DashboardFragment : Fragment() {
 
     private var selectedDate = LocalDate.now()
-
-//    private var today = LocalDate.now()
     private val dateFormatter = DateTimeFormatter.ofPattern("dd")
     private val dayFormatter = DateTimeFormatter.ofPattern("EEE")
-    private val selectedDates = mutableSetOf<LocalDate>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_dashboard, container, false)
     }
 
@@ -46,7 +46,7 @@ class DashboardFragment : Fragment() {
         val wm = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         wm.defaultDisplay.getMetrics(dm)
         exSevenCalendar.apply {
-            val dayWidth = dm.widthPixels / 8
+            val dayWidth = dm.widthPixels / 7
             val dayHeight = (dayWidth * 1.25).toInt()
             daySize = Size(dayWidth, dayHeight)
         }
@@ -62,20 +62,11 @@ class DashboardFragment : Fragment() {
                     val firstDay = exSevenCalendar.findFirstVisibleDay()
                     val lastDay = exSevenCalendar.findLastVisibleDay()
                     if (firstDay == day) {
-                        // If the first date on screen was clicked, we scroll to the date to ensure
-                        // it is fully visible if it was partially off the screen when clicked.
                         exSevenCalendar.smoothScrollToDate(day.date)
                     } else if (lastDay == day) {
-                        // If the last date was clicked, we scroll to 4 days ago, this forces the
-                        // clicked date to be fully visible if it was partially off the screen.
-                        // We scroll to 4 days ago because we show max of five days on the screen
-                        // so scrolling to 4 days ago brings the clicked date into full visibility
-                        // at the end of the calendar view.
                         exSevenCalendar.smoothScrollToDate(day.date.minusDays(4))
                     }
 
-                    // Example: If you want the clicked date to always be centered on the screen,
-                    // you would use: exSevenCalendar.smoothScrollToDate(day.date.minusDays(2))
 
                     if (selectedDate != day.date) {
                         val oldDate = selectedDate
@@ -90,7 +81,6 @@ class DashboardFragment : Fragment() {
                 this.day = day
                 DateText.text = dateFormatter.format(day.date)
                 DayText.text = dayFormatter.format(day.date)
-//                exSevenMonthText.text = monthFormatter.format(day.date)
 
                 DateText.setTextColor(view.context.getColorCompat(if (day.date == selectedDate) R.color.blue else R.color.black))
                 DayText.setTextColor(view.context.getColorCompat(if (day.date == selectedDate) R.color.blue else R.color.gray))
@@ -105,10 +95,21 @@ class DashboardFragment : Fragment() {
         }
 
         val currentMonth = YearMonth.now()
-        // Value for firstDayOfWeek does not matter since inDates and outDates are not generated.
         exSevenCalendar.setup(currentMonth, currentMonth.plusMonths(3), DayOfWeek.values().random())
         exSevenCalendar.scrollToDate(LocalDate.now())
 
+
+        table_recycler_view.layoutManager = LinearLayoutManager(activity)
+        val divItem = DividerItemDecoration(activity,DividerItemDecoration.VERTICAL)
+        table_recycler_view.addItemDecoration(divItem)
+
+        val rv_dataLists = mutableListOf<rv_data>()
+        rv_dataLists.add(rv_data("AA Condo","13","30"))
+        rv_dataLists.add(rv_data("BB Condo","10","20"))
+        rv_dataLists.add(rv_data("CC Condo","13","20"))
+
+        val adt = adt_rv(rv_dataLists)
+        table_recycler_view.adapter = adt
     }
 
 }
